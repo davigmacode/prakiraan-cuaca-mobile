@@ -32,6 +32,7 @@
 .icon-sun:before,
 .icon-cerah {
 	content: "\e601";
+	color: #F2CA27;
 }
 .icon-moon:before {
 	content: "\e602";
@@ -51,7 +52,7 @@
 .icon-cloudy:before,
 .icon-cerah-berawan:before {
 	content: "\e607";
-	color: #3498DB;
+	color: #D35400;
 }
 .icon-cloud:before {
 	content: "\e608";
@@ -79,13 +80,13 @@
 .icon-lightning2:before {
 	content: "\e60f";
 }
-.icon-rainy:before,
-.icon-hujan-ringan:before {
+.icon-rainy:before {
 	content: "\e610";
-	color: #3498DB;
 }
-.icon-rainy2:before {
+.icon-rainy2:before,
+.icon-hujan-ringan:before {
 	content: "\e611";
+	color: #3498DB;
 }
 .icon-windy2:before {
 	content: "\e612";

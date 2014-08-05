@@ -102,17 +102,9 @@ function about () {
 }
 
 function exitFromApp() {
-	/*navigator.notification.confirm(
-		'Keluar dari aplikasi?',
-		function (buttonIndex) {
-			if (buttonIndex==1){
-				navigator.app.exitApp();
-			}
-		}, // <-- no brackets
-		'Close',
-		['Ok','Cancel']
-	);*/
-	navigator.app.exitApp();
+	if (confirm("Keluar dari aplikasi?")) {
+		navigator.app.exitApp();
+	}
 }
 
 var myScroll;
@@ -134,23 +126,25 @@ function YQL(url, callback) {
 }
 
 function refresh () {
-	$('.spinner').show();
+	$('#spinner').show();
 	YQL('http://data.bmkg.go.id/cuaca_indo_1.xml', function (json) {
 		//console.log(json.error ? "Internal Server Error!" : json.query.results);
 		if (json.error != 'undefined')
 		{
 			var isi = '';
-			json = json.query.results;
+			json = json.query.results.Cuaca;
 
-			var arr = json.Cuaca.Isi.Row;
+			$('#date').html('Tanggal '+json.Tanggal.Mulai+' - '+json.Tanggal.Sampai);
+
+			var arr = json.Isi.Row;
 			for (var i = 0, len = arr.length; i < len; i++) {
 				isi += '<li>'+
 					'<i class="icon-'+arr[i].Cuaca.replace(/\s+/g, '-').toLowerCase()+'"></i>'+
 					'<div class="details">'+
 						'<big>'+arr[i].Kota+'</big>'+
 						'<small>'+arr[i].Cuaca+'</small>'+
-						'<small>Kelembapan: '+arr[i].KelembapanMin+' - '+arr[i].KelembapanMax+'</small>'+
-						'<small>Suhu: '+arr[i].SuhuMin+' - '+arr[i].SuhuMax+'</small>'+
+						'<small>Kelembapan: '+arr[i].KelembapanMin+' - '+arr[i].KelembapanMax+' %</small>'+
+						'<small>Suhu: '+arr[i].SuhuMin+' - '+arr[i].SuhuMax+' &deg;C</small>'+
 					'<div class="clearfix"></div>'+
 					'</div>'+
 				'</li>';
@@ -159,11 +153,17 @@ function refresh () {
 			$('#scroller ul').html(isi);
 			myScroll = new IScroll('#wrapper');
 		}
-		$('.spinner').hide();
+		$('#spinner').hide();
 	});
 }
 
 // Wait for device API libraries to load
-document.addEventListener("deviceready", function (argument) {
+/*document.addEventListener("deviceready", function (argument) {
 	refresh();
-}, false);
+}, false);*/
+
+if (window.cordova) {
+	document.addEventListener("deviceready", refresh, false);
+} else {
+	window.onload = refresh; //this is the browser
+}
