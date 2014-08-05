@@ -28,7 +28,7 @@ left: 0;
 width: 100%;
 height: 45px;
 line-height: 45px;
-background: #d35400;
+background: #19B698;
 padding: 3px;
 color: #fff;
 font-size: 12px;
@@ -38,6 +38,20 @@ font-weight: bold;
 
 header h1 {
 margin: 0;
+}
+
+#date {
+position: absolute;
+z-index: 2;
+top: 45px;
+left: 0;
+width: 100%;
+height: 20px;
+text-align: center;
+vertical-align: baseline;
+line-height: 20px;
+color: #777;
+background: #eee;
 }
 
 #footer {
@@ -52,6 +66,7 @@ padding: 0;
 display: table;
 border-collapse: separate;
 //border-spacing: 1px;
+//table-layout: fixed;
 }
 
 #footer a {
@@ -62,17 +77,25 @@ color: white;
 text-align: center;
 vertical-align: middle;
 text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-background: #f39c12;
+background: #16a085;
 border: 0;
-border-bottom: 2px solid #e8930c;
+border-bottom: 2px solid #138a72;
 cursor: pointer;
 display: table-cell;
+}
+
+#footer a#refresh {
+	background: #19b698;
+}
+
+#footer a#close {
+	background: #1ccdaa;
 }
 
 #wrapper {
 position: absolute;
 z-index: 1;
-top: 45px;
+top: 65px;
 bottom: 40px;
 left: 0;
 width: 100%;
@@ -125,7 +148,7 @@ font-size: 14px;
 	display: block;
 }
 
-.spinner {
+/*.spinner {
 display: none;
 margin: 0 auto;
 position: fixed;
@@ -144,7 +167,6 @@ border-radius: 100%;
 display: inline-block;
 -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
 animation: bouncedelay 1.4s infinite ease-in-out;
-/* Prevent first frame from flickering when animation starts */
 -webkit-animation-fill-mode: both;
 animation-fill-mode: both;
 }
@@ -172,7 +194,18 @@ transform: scale(0.0);
 transform: scale(1.0);
 -webkit-transform: scale(1.0);
 }
+}*/
+
+.loader {
+display: none;
+margin: 0 auto;
+position: fixed;
+top: 46%;
+width: 100%;
+text-align: center;
+z-index: 100;
 }
+
 
 .clearfix:after {
 visibility: hidden;
