@@ -1,103 +1,4 @@
-// http://blogs.agilefaqs.com/2013/07/17/fetching-cross-domain-xml-in-javascript-simple-solution/
-
-/*ajaxlib = function (url) {
-
-	this.url = url;
-
-	this.init = function () {
-		this.fetchJSON(this.url);
-	};
-
-	this.fetchJSON = function (url) {
-		var root = 'https://query.yahooapis.com/v1/public/yql?q=';
-		var yql = 'select * from xml where url="' + url + '"';
-		var proxy_url = root + encodeURIComponent(yql) + '&format=json&diagnostics=false&callback=this.display';
-		document.getElementsByTagName('body')[0].appendChild(this.jsTag(proxy_url));
-	};
-
-	this.jsTag = function (url) {
-		var script = document.createElement('script');
-		script.setAttribute('type', 'text/javascript');
-		script.setAttribute('src', url);
-		return script;
-	};
-
-	this.display = function (results) {
-		results = results.error ? "Internal Server Error!" : results.query.results;
-		// do the necessary stuff
-		document.getElementById('demo').innerHTML = "Result = " + results;
-		console.log(results);
-		return results;
-	};
-
-	this.init();
-};*/
-
-/*function ajaxlib (url) {
-
-	this.display = function (results) {
-		results = results.error ? "Internal Server Error!" : results.query.results;
-		// do the necessary stuff
-		document.getElementById('demo').innerHTML = "Result = " + results;
-		console.log(results.error ? "Internal Server Error!" : results.query.results);
-		return results.error ? "Internal Server Error!" : results.query.results;
-	};
-
-	this.jsTag = function (url) {
-		var script = document.createElement('script');
-		script.setAttribute('type', 'text/javascript');
-		script.setAttribute('src', url);
-		return script;
-	};
-
-	var root = 'https://query.yahooapis.com/v1/public/yql?q=';
-	var yql = 'select * from xml where url="' + url + '"';
-	var proxy_url = root + encodeURIComponent(yql) + '&format=json&diagnostics=false&callback=this.display';
-	var script = document.createElement('script');
-	script.setAttribute('type', 'text/javascript');
-	script.setAttribute('src', url);
-	document.getElementsByTagName('body')[0].appendChild(this.jsTag(proxy_url));
-
-}
-
-// YQL serves JSONP (with a callback) so all we have to do
-// is create a script element with the right 'src':
-function YQLQuery(query, callback) {
-    this.query = query;
-    this.callback = callback || function(){};
-    this.fetch = function() {
-
-        if (!this.query || !this.callback) {
-            throw new Error('YQLQuery.fetch(): Parameters may be undefined');
-        }
-
-        var scriptEl = document.createElement('script'),
-            uid = 'yql' + new Date(),
-            encodedQuery = encodeURIComponent(this.query.toLowerCase()),
-            instance = this;
-
-        YQLQuery[uid] = function(json) {
-            instance.callback(json);
-            delete YQLQuery[uid];
-            document.body.removeChild(scriptEl);
-        };
-
-        scriptEl.src = 'http://query.yahooapis.com/v1/public/yql?q=' +
-        						encodedQuery + '&format=json&callback=YQLQuery.' + uid;
-        document.body.appendChild(scriptEl);
-
-    };
-}*/
-
 function about () {
-	/*navigator.notification.alert(
-		'You are the winner!',  // message
-		function (argument) {
-			// body...
-		},         // callback
-		'About',            // title
-		'Done'                  // buttonName
-	);*/
 	alert('developed by davigmacode. source aplikasi bisa dilihat di http://github.com/davigmacode/prakiraan-cuaca-mobile');
 }
 
@@ -109,61 +10,107 @@ function exitFromApp() {
 
 var myScroll;
 
-function YQL(url, callback) {
-	var root = 'https://query.yahooapis.com/v1/public/yql?q=';
-	var query = 'select * from xml where url="' + url + '"';
-	var encoded = root + encodeURIComponent(query) + '&format=json&diagnostics=false';
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.open('GET', encoded, true);
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4) {
-			if(xmlhttp.status == 200) {
-				callback(JSON.parse(xmlhttp.responseText));
-			}
-		}
-	};
-	xmlhttp.send(null);
+function yql(url) {
+	return 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + url + '"') + '&format=json&diagnostics=false';
 }
 
 function refresh () {
+	$('#wrapper').html('');
+	$('#error').hide();
 	$('#spinner').show();
-	YQL('http://data.bmkg.go.id/cuaca_indo_1.xml', function (json) {
-		//console.log(json.error ? "Internal Server Error!" : json.query.results);
-		if (json.error != 'undefined')
+	// fetch data untuk kalender hijriyah
+	$.ajax({
+		type: 'GET',
+		url: yql('http://data.bmkg.go.id/cuaca_indo_1.xml'),
+		// type of data we are expecting in return:
+		dataType: 'json',
+		timeout: 3000,
+		success: function (data)
 		{
-			var isi = '';
-			json = json.query.results.Cuaca;
-
-			$('#date').html('Tanggal '+json.Tanggal.Mulai+' - '+json.Tanggal.Sampai);
-
-			var arr = json.Isi.Row;
-			for (var i = 0, len = arr.length; i < len; i++) {
-				isi += '<li>'+
-					'<i class="icon-'+arr[i].Cuaca.replace(/\s+/g, '-').toLowerCase()+'"></i>'+
-					'<div class="details">'+
-						'<big>'+arr[i].Kota+'</big>'+
-						'<small>'+arr[i].Cuaca+'</small>'+
-						'<small>Kelembapan: '+arr[i].KelembapanMin+' - '+arr[i].KelembapanMax+' %</small>'+
-						'<small>Suhu: '+arr[i].SuhuMin+' - '+arr[i].SuhuMax+' &deg;C</small>'+
-					'<div class="clearfix"></div>'+
-					'</div>'+
-				'</li>';
+			//console.log(data);
+			if (typeof data.query.results !== 'undefined' && data.query.results !== null)
+			{
+				//console.log(data.query.results.Cuaca.Isi.Row);
+				data.query.results.Cuaca.Isi.Row.sort(function (a, b) {
+					if (a.Kota > b.Kota)
+						return 1;
+					if (a.Kota < b.Kota)
+						return -1;
+					// a must be equal to b
+					return 0;
+				});
+				// cache data ajax
+				window.localStorage.setItem('yql', JSON.stringify(data));
+				// tampilkan data di layar
+				display(data);
 			}
-
-			$('#scroller ul').html(isi);
-			myScroll = new IScroll('#wrapper');
+			else
+				$('#error').show();
+		},
+		error: function () {
+			//console.log('fetch error');
+			$('#error').show();
+		},
+		complete: function () {
+			$('#spinner').hide();
 		}
-		$('#spinner').hide();
 	});
 }
 
-// Wait for device API libraries to load
-/*document.addEventListener("deviceready", function (argument) {
-	refresh();
-}, false);*/
+function display (json) {
+	//var localData = JSON.parse(window.localStorage.getItem('yql'));
+	if (typeof json.query.results !== 'undefined' && json.query.results !== null)
+	{
+		var isi = '<div id="scroller"><ul>';
+		json = json.query.results.Cuaca;
+
+		$('#date').html('Tanggal '+json.Tanggal.Mulai+' - '+json.Tanggal.Sampai);
+
+		var arr = json.Isi.Row;
+		for (var i = 0, len = arr.length; i < len; i++) {
+			isi += '<li>'+
+				'<i class="icon-'+arr[i].Cuaca.replace(/\s+/g, '-').toLowerCase()+'"></i>'+
+				'<div class="details">'+
+					'<big>'+arr[i].Kota+'</big>'+
+					'<small>'+arr[i].Cuaca+'</small>'+
+					'<small>Kelembapan: '+arr[i].KelembapanMin+' - '+arr[i].KelembapanMax+' %</small>'+
+					'<small>Suhu: '+arr[i].SuhuMin+' - '+arr[i].SuhuMax+' &deg;C</small>'+
+				'<div class="clearfix"></div>'+
+				'</div>'+
+			'</li>';
+		}
+		isi += '</ul></div>';
+
+		$('#wrapper').html(isi);
+		myScroll = new IScroll('#wrapper');
+	}
+}
+
+function fetch () {
+	var localdata = JSON.parse(window.localStorage.getItem('yql'));
+
+	if (typeof localdata !== 'undefined' && localdata !== null)
+	{
+		var cacheDate = new Date(localdata.query.created).toDateString();
+		var todayDate = new Date().toDateString();
+		/*console.log(cacheDate);
+		console.log(todayDate);
+		console.log(cacheDate === todayDate);*/
+
+		if (cacheDate === todayDate) {
+			display(localdata);
+		} else {
+			refresh();
+		}
+	}
+	else
+	{
+		refresh();
+	}
+}
 
 if (window.cordova) {
-	document.addEventListener("deviceready", refresh, false);
+	document.addEventListener("deviceready", fetch, false);
 } else {
-	window.onload = refresh; //this is the browser
+	window.onload = fetch; //this is the browser
 }
