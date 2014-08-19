@@ -30,7 +30,7 @@
 	content: "\e600";
 }
 .icon-sun:before,
-.icon-cerah {
+.icon-cerah:before {
 	content: "\e601";
 	color: #F2CA27;
 }
@@ -84,7 +84,8 @@
 	content: "\e610";
 }
 .icon-rainy2:before,
-.icon-hujan-ringan:before {
+.icon-hujan-ringan:before,
+.icon-hujan-sedang:before {
 	content: "\e611";
 	color: #3498DB;
 }
